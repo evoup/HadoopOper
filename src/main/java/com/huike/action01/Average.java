@@ -26,7 +26,7 @@ public class Average extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			LOG.info("[AverageCountMapper][line:"+ line + "]");
+			LOG.info("[AverageCountMapper][line:" + line + "]");
 			String[] parameters = line.split("\\s+");
 			LOG.info("[AverageCountMapper][parameters:" + new Gson().toJson(parameters) + "]");
 			context.write(new Text(parameters[0]), new Text(parameters[1]));
@@ -40,11 +40,13 @@ public class Average extends Configured implements Tool {
 			LOG.info("[AverageCountCombiner]");
 			Double sum = 0.00;
 			int count = 0;
+			LOG.info("[AverageCountCombiner][" + new Gson().toJson(values) + "]");
 			for (Text item : values) {
 				sum = sum + Double.parseDouble(item.toString());
 				LOG.info("[AverageCountCombiner][sum:" + sum + "]");
 				count++;
 			}
+			LOG.info("[AverageCountCombiner][count:" + count + "]");
 			context.write(new Text(key), new Text(sum + "-" + count));
 		}
 	}
@@ -57,7 +59,7 @@ public class Average extends Configured implements Tool {
 			for (Text t : values) {
 				LOG.info("[AverageCountReducer][Text:" + t + "]");
 				String[] str = t.toString().split("-");
-				LOG.info("[AverageCountReducer][str:" +new Gson().toJson(str) + "]");
+				LOG.info("[AverageCountReducer][str:" + new Gson().toJson(str) + "]");
 				sum += Double.parseDouble(str[0]);
 				count += Integer.parseInt(str[1]);
 				LOG.info("[AverageCountReducer][sum:" + sum + "][count:" + count + "]");
