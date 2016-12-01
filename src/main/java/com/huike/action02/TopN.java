@@ -62,10 +62,14 @@ public class TopN extends Configured implements Tool {
 
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			for (Text item : values) {
+				LOG.info("[reduce][value:" + values + "]");
 				String value[] = item.toString().split("\t");
+				LOG.info("[reduce][values:" + new Gson().toJson(value) + "]");
 				Integer clicks = Integer.parseInt(value[1]);
+				LOG.info("[reduce][clicks:" + clicks + "]");
 				map.put(clicks, item.toString());
 				if (map.size() > k) {
+					LOG.info("[reduce][reach 3, remove first element]");
 					map.remove(map.firstKey());
 				}
 			}
@@ -98,6 +102,6 @@ public class TopN extends Configured implements Tool {
 		String[] args0 = { "/test/action02/TopN.txt", "/test/action02/output/" };
 		int res = ToolRunner.run(new Configuration(), new TopN(), args0);
 		System.out.println(res);
-
+		LOG.info("[main][res:" + res + "]");
 	}
 }
