@@ -95,6 +95,7 @@ public class Average extends Configured implements Tool {
 	public static void main(String[] args) throws Exception {
 		String[] args0 = { "/test/action01/Average.txt", "/test/action01/output/" };
 		int res = ToolRunner.run(new Configuration(), new Average(), args0);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		System.out.println(res);
 		logger.debug("[main][res:" + res + "]");
 	}
