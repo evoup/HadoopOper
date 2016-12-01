@@ -63,6 +63,7 @@ public class TopN extends Configured implements Tool {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			for (Text item : values) {
 				LOG.info("[reduce][value:" + values + "]");
+				System.out.println("[reduce][value:" + values + "]");
 				String value[] = item.toString().split("\t");
 				LOG.info("[reduce][values:" + new Gson().toJson(value) + "]");
 				Integer clicks = Integer.parseInt(value[1]);
