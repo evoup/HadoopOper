@@ -3,6 +3,7 @@ package com.huike.action02;
 import java.io.IOException;
 import java.util.TreeMap;
 
+import com.google.gson.Gson;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -17,8 +18,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class TopN extends Configured implements Tool {
+	private static final Log LOG = LogFactory.getLog(TopN.class);
 
 	public static final int k = 3;
 
@@ -28,11 +32,14 @@ public class TopN extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-
+			LOG.info("[map][key:" + key +"][line:" + line + "]");
 			String[] parameters = line.split("\\s+");
+			LOG.info("[map][parameters:" + new Gson().toJson(parameters) + "]");
 			Integer clicks = Integer.parseInt(parameters[1]);
+			LOG.info("[map][clicks:" + clicks + "]");
 			map.put(clicks, value.toString());
 			if (map.size() > k) {
+				LOG.info("[map][large than 3, remove " + map.firstKey() + "]");
 				map.remove(map.firstKey());
 			}
 
@@ -40,7 +47,8 @@ public class TopN extends Configured implements Tool {
 
 		protected void cleanup(Context context) throws IOException, InterruptedException {
 			for (String text : map.values()) {
-				if (text.toString() != null && !text.toString().equals("")) {
+				LOG.info("[cleanup][text:" + text + "]");
+				if (text != null && !text.equals("")) {
 					context.write(NullWritable.get(), new Text(text));
 				}
 			}
