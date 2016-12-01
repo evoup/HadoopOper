@@ -22,8 +22,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SecondarySort extends Configured implements Tool {
+	private static final Log LOG = LogFactory.getLog(SecondarySort.class);
 
 	public static class SecondarySortMapper extends Mapper<LongWritable, Text, IntPair, IntWritable> {
 		private IntPair intkey = new IntPair();
@@ -31,13 +34,20 @@ public class SecondarySort extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
+			LOG.info("[SecondarySortMapper][line:" + line + "]");
 			StringTokenizer tokenizer = new StringTokenizer(line);
+			LOG.info("[SecondarySortMapper][tokenizer:" + tokenizer + "]");
 			int left = 0;
 			int right = 0;
 			if (tokenizer.hasMoreTokens()) {
+				LOG.info("[SecondarySortMapper][hasMoreTokens]");
 				left = Integer.parseInt(tokenizer.nextToken());
-				if (tokenizer.hasMoreTokens())
+				LOG.info("[SecondarySortMapper][left:" + left + "]");
+				if (tokenizer.hasMoreTokens()) {
+					LOG.info("[SecondarySortMapper][right:" + right + "]");
 					right = Integer.parseInt(tokenizer.nextToken());
+				}
+				LOG.info("[SecondarySortMapper][left:" + left + "][right:" + right + "]");
 				intkey.set(left, right);
 				intvalue.set(right);
 				context.write(intkey, intvalue);
@@ -51,7 +61,9 @@ public class SecondarySort extends Configured implements Tool {
 		public void reduce(IntPair key, Iterable<IntWritable> values, Context context)
 				throws IOException, InterruptedException {
 			left.set(Integer.toString(key.getFirst()));
+			LOG.info("[SecondarySortReducer][left set:" + Integer.toString(key.getFirst()) + "]");
 			for (IntWritable val : values) {
+				LOG.info("[SecondarySortReducer][val:" + val + "]");
 				context.write(left, val);
 			}
 		}
