@@ -61,7 +61,7 @@ public class TopN extends Configured implements Tool {
 		private TreeMap<Integer, String> map = new TreeMap<Integer, String>();
 
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-			for (Text item : values) {
+/*			for (Text item : values) {
 				LOG.info("[reduce][value:" + values + "]");
 				System.out.println("[reduce][value:" + values + "]");
 				String value[] = item.toString().split("\t");
@@ -76,7 +76,7 @@ public class TopN extends Configured implements Tool {
 			}
 			for (String text : map.values()) {
 				context.write(NullWritable.get(), new Text(text));
-			}
+			}*/
 		}
 	}
 
