@@ -26,9 +26,9 @@ public class Average extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			LOG.debug("[AverageCountMapper][line:"+ line + "]");
+			LOG.info("[AverageCountMapper][line:"+ line + "]");
 			String[] parameters = line.split("\\s+");
-			LOG.debug("[AverageCountMapper][parameters:" + new Gson().toJson(parameters) + "]");
+			LOG.info("[AverageCountMapper][parameters:" + new Gson().toJson(parameters) + "]");
 			context.write(new Text(parameters[0]), new Text(parameters[1]));
 
 		}
@@ -37,12 +37,12 @@ public class Average extends Configured implements Tool {
 
 	public static class AverageCountCombiner extends Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-			LOG.debug("[AverageCountCombiner]");
+			LOG.info("[AverageCountCombiner]");
 			Double sum = 0.00;
 			int count = 0;
 			for (Text item : values) {
 				sum = sum + Double.parseDouble(item.toString());
-				LOG.debug("[AverageCountCombiner][sum:" + sum + "]");
+				LOG.info("[AverageCountCombiner][sum:" + sum + "]");
 				count++;
 			}
 			context.write(new Text(key), new Text(sum + "-" + count));
@@ -51,19 +51,19 @@ public class Average extends Configured implements Tool {
 
 	public static class AverageCountReducer extends Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-			LOG.debug("[AverageCountReducer]");
+			LOG.info("[AverageCountReducer]");
 			Double sum = 0.00;
 			int count = 0;
 			for (Text t : values) {
-				LOG.debug("[AverageCountReducer][Text:" + t + "]");
+				LOG.info("[AverageCountReducer][Text:" + t + "]");
 				String[] str = t.toString().split("-");
-				LOG.debug("[AverageCountReducer][str:" +new Gson().toJson(str) + "]");
+				LOG.info("[AverageCountReducer][str:" +new Gson().toJson(str) + "]");
 				sum += Double.parseDouble(str[0]);
 				count += Integer.parseInt(str[1]);
-				LOG.debug("[AverageCountReducer][sum:" + sum + "][count:" + count + "]");
+				LOG.info("[AverageCountReducer][sum:" + sum + "][count:" + count + "]");
 			}
 			double average = sum / count;
-			LOG.debug("[AverageCountReducer][average:" + average + "]");
+			LOG.info("[AverageCountReducer][average:" + average + "]");
 			context.write(new Text(key), new Text(String.valueOf(average)));
 		}
 	}
@@ -96,6 +96,6 @@ public class Average extends Configured implements Tool {
 		int res = ToolRunner.run(new Configuration(), new Average(), args0);
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		System.out.println(res);
-		LOG.debug("[main][res:" + res + "]");
+		LOG.info("[main][res:" + res + "]");
 	}
 }
