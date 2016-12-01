@@ -43,7 +43,7 @@ public class Average extends Configured implements Tool {
 			LOG.info("[AverageCountCombiner][" + new Gson().toJson(values) + "]");
 			for (Text item : values) {
 				sum = sum + Double.parseDouble(item.toString());
-				LOG.info("[AverageCountCombiner][sum:" + sum + "]");
+				LOG.info("[AverageCountCombiner][sum:" + sum + "][add item:" + item.toString() + "]");
 				count++;
 			}
 			LOG.info("[AverageCountCombiner][count:" + count + "]");
