@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,7 +69,7 @@ public class IntPair implements WritableComparable<IntPair> {
 		}
 	}
 
-	@Override
+/*	@Override
 	public int hashCode() {
 		LOG.info("[hashCode][first:" + first + "][second:" + second +"][result:" +
 				first * 157 + second + "]");
@@ -102,5 +102,5 @@ public class IntPair implements WritableComparable<IntPair> {
 			LOG.info("[equals][not instanceof IntPair][return false]");
 			return false;
 		}
-	}
+	}*/
 }
