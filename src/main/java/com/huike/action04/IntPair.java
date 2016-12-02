@@ -50,13 +50,21 @@ public class IntPair implements WritableComparable<IntPair> {
 	@Override
 	public int compareTo(IntPair o) {
 		if (first != o.first) {
-			LOG.info("[compareTo][first:" + first + "][o.first:" + o.first + "]");
+			if (first < o.first) {
+				LOG.info("[compareTo][first:" + first + "][o.first:" + o.first + "][return -1]");
+			} else {
+				LOG.info("[compareTo][first:" + first + "][o.first:" + o.first + "][return 1]");
+			}
 			return first < o.first ? -1 : 1;
 		} else if (second != o.second) {
-			LOG.info("[compareTo][second:" + second + "][o.second:" + o.second + "]");
+			if (second < o.second) {
+				LOG.info("[compareTo][second:" + second + "][o.second:" + o.second + "][return -1]");
+			} else {
+				LOG.info("[compareTo][second:" + second + "][o.second:" + o.second + "][return 1]");
+			}
 			return second < o.second ? -1 : 1;
 		} else {
-			LOG.info("[compareTo][ret 0]");
+			LOG.info("[compareTo][both equal][ret 0]");
 			return 0;
 		}
 	}
