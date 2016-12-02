@@ -69,7 +69,7 @@ public class IntPair implements WritableComparable<IntPair> {
 		}
 	}
 
-/*	@Override
+	@Override
 	public int hashCode() {
 		LOG.info("[hashCode][first:" + first + "][second:" + second +"][result:" +
 				first * 157 + second + "]");
@@ -102,5 +102,5 @@ public class IntPair implements WritableComparable<IntPair> {
 			LOG.info("[equals][not instanceof IntPair][return false]");
 			return false;
 		}
-	}*/
+	}
 }
