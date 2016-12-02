@@ -34,9 +34,9 @@ public class IntPair implements WritableComparable<IntPair> {
 	@Override
 	// 反序列化，从流中的二进制转换成IntPair
 	public void readFields(DataInput in) throws IOException {
-		LOG.info("[readFields][first:"+ in.readInt() +"][second:" + in.readInt() +"]");
 		first = in.readInt();
 		second = in.readInt();
+		LOG.info("[readFields][first:"+ first +"][second:" + second +"]");
 	}
 
 	@Override
