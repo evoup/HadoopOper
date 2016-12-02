@@ -75,7 +75,8 @@ public class SecondarySort extends Configured implements Tool {
 	public static class FirstPartitioner extends Partitioner<IntPair, IntWritable> {
 		@Override
 		public int getPartition(IntPair key, IntWritable value, int numPartitions) {
-			LOG.info("[FirstPartitioner][getPartition][numPartitions:" + numPartitions + "][result:" +
+			LOG.info("[FirstPartitioner][getPartition][numPartitions:" + numPartitions + "]" +
+					"[key.getFirst:" + key.getFirst() + "][result:" +
 					Math.abs(key.getFirst() * 127) % numPartitions + "]");
 			return Math.abs(key.getFirst() * 127) % numPartitions;
 		}
