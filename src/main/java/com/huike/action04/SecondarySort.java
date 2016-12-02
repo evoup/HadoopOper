@@ -37,7 +37,6 @@ public class SecondarySort extends Configured implements Tool {
 			String line = value.toString();
 			LOG.info("[SecondarySortMapper][line:" + line + "]");
 			StringTokenizer tokenizer = new StringTokenizer(line);
-			LOG.info("[SecondarySortMapper][tokenizer:" + tokenizer + "]");
 			int left = 0;
 			int right = 0;
 			if (tokenizer.hasMoreTokens()) {
