@@ -3,6 +3,7 @@ package com.huike.action04;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import com.google.gson.Gson;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -75,6 +76,8 @@ public class SecondarySort extends Configured implements Tool {
 	public static class FirstPartitioner extends Partitioner<IntPair, IntWritable> {
 		@Override
 		public int getPartition(IntPair key, IntWritable value, int numPartitions) {
+			LOG.info("[FirstPartitioner][getPartition][numPartitions:" + numPartitions + "][result:" +
+					Math.abs(key.getFirst() * 127) % numPartitions + "]");
 			return Math.abs(key.getFirst() * 127) % numPartitions;
 		}
 	}
@@ -93,8 +96,19 @@ public class SecondarySort extends Configured implements Tool {
 		public int compare(WritableComparable w1, WritableComparable w2) {
 			IntPair ip1 = (IntPair) w1;
 			IntPair ip2 = (IntPair) w2;
+			LOG.info("[GroupingComparator][ip1:" + new Gson().toJson(ip1) + "][ip2:" + new Gson().toJson(ip2) + "]");
 			int l = ip1.getFirst();
 			int r = ip2.getFirst();
+			LOG.info("[GroupingComparator][l:" + l + "][r:" + r + "]");
+			if (l==r) {
+				LOG.info("[GroupingComparator][return:0]");
+			} else {
+				if (l < r) {
+					LOG.info("[GroupingComparator][return:-1]");
+				} else {
+					LOG.info("[GroupingComparator][return:1]");
+				}
+			}
 			return l == r ? 0 : (l < r ? -1 : 1);
 		}
 	}
