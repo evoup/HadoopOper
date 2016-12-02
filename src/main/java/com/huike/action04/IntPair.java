@@ -4,7 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-//import com.google.gson.Gson;
+import com.google.gson.Gson;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
