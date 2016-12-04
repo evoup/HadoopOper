@@ -17,8 +17,11 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class MapJoin extends Configured implements Tool {
+	private static final Log LOG = LogFactory.getLog(MapJoin.class);
 
 	public static class MapJoinMapper extends Mapper<Object, Text, Text, Text> {
 		private HashMap<String, String> stationMap = new HashMap<String, String>();
@@ -43,6 +46,8 @@ public class MapJoin extends Configured implements Tool {
 						if (stationItems.length == 3) {// 去掉脏数据
 							// 缓存到一个map
 							stationMap.put(stationItems[0], stationItems[1] + "\t" + stationItems[2]);
+							LOG.info("[MapJoinMapper][setup][stationMap put][key:" +  stationItems[0]
+									+ "][value:" + stationItems[1] + "\t" + stationItems[2] + "]");
 						}
 					}
 				}
@@ -63,9 +68,11 @@ public class MapJoin extends Configured implements Tool {
 
 			// 判断当前记录的joinkey字段是否在stationMap中
 			station = stationMap.get(TemperatureItems[0]);
+			LOG.info("[MapJoinMapper][map][station:" + station + "]");
 			if (null != station) {// 如果缓存中存在对应的joinkey，那就做连接操作并输出
 				outPutKey.set(TemperatureItems[0]);
 				outPutValue.set(station + "\t" + TemperatureItems[1] + "\t" + TemperatureItems[2]);
+				LOG.info("[MapJoinMapper][context.write][key:"+outPutKey+"][value:"+outPutValue+"]");
 				context.write(outPutKey, outPutValue);
 			}
 		}
