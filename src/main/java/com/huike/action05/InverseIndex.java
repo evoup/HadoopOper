@@ -54,7 +54,7 @@ public class InverseIndex extends Configured implements Tool {
 				String word = st.nextToken().toLowerCase();
 				LOG.info("[InverseIndexMapper][word:" + word + "]");
 				word = word + ":" + fileName;
-				LOG.info("[InverseIndexMapper][write word:" + word + "]");
+				LOG.info("[InverseIndexMapper][content.write][key:" + word + "][value:1]");
 				context.write(new Text(word), new Text("1"));
 			}
 		}
@@ -74,7 +74,9 @@ public class InverseIndex extends Configured implements Tool {
 			String wordKey = StringUtil.getSplitByIndex(key.toString(), ":", 0);
 			LOG.info("[InverseIndexCombiner][key:" + key + "][workKey:" + wordKey + "]");
 			String fileNameKey = StringUtil.getSplitByIndex(key.toString(), ":", 1);
-			LOG.info("[InverseIndexCombiner][key:" + key + "][fileNameKey:" + fileNameKey + "]");
+			LOG.info("[InverseIndexCombiner][fileNameKey:" + fileNameKey + "]");
+			LOG.info("[InverseIndexCombiner][context.write][key:" + wordKey + "][value:" +
+					fileNameKey + ":" + String.valueOf(sum) + "]");
 			context.write(new Text(wordKey), new Text(fileNameKey + ":" + String.valueOf(sum)));
 		}
 	}
@@ -89,7 +91,7 @@ public class InverseIndex extends Configured implements Tool {
 				LOG.info("[InverseIndexReducer][sb:" + sb.toString() + "][v:" + v.toString() + "]");
 				sb.append(v.toString() + " ");
 			}
-			LOG.info("[InverseIndexReducer][key:" + key + "][sb: "+ sb.toString() +"]");
+			LOG.info("[InverseIndexReducer][context.write][key:" + key + "][value: "+ sb.toString() +"]");
 			context.write(key, new Text(sb.toString()));
 		}
 	}
