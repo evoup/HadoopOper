@@ -69,10 +69,10 @@ public class InverseIndex extends Configured implements Tool {
 			LOG.info("[InverseIndexCombiner][sum:0]");
 			for (Text value : values) {
 				sum += Integer.valueOf(value.toString());
-				LOG.info("[InverseIndexCombiner][sum:" + sum + "]");
+				LOG.info("[InverseIndexCombiner][key:" + key.toString() + "][sum:" + sum + "]");
 			}
 			String wordKey = StringUtil.getSplitByIndex(key.toString(), ":", 0);
-			LOG.info("[InverseIndexCombiner][key:" + key + "][workKey:" + wordKey + "]");
+			LOG.info("[InverseIndexCombiner][key:" + key.toString() + "][workKey:" + wordKey + "]");
 			String fileNameKey = StringUtil.getSplitByIndex(key.toString(), ":", 1);
 			LOG.info("[InverseIndexCombiner][fileNameKey:" + fileNameKey + "]");
 			LOG.info("[InverseIndexCombiner][context.write][key:" + wordKey + "][value:" +
