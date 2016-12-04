@@ -6,6 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.StringTokenizer;
 
+import org.apache.commons.logging.impl.SimpleLog;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -20,6 +21,8 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 //工具类
 class StringUtil {
@@ -38,16 +41,20 @@ class StringUtil {
 }
 
 public class InverseIndex extends Configured implements Tool {
+	private static final Log LOG = LogFactory.getLog(InverseIndex.class);
 
 	public static class InverseIndexMapper extends Mapper<LongWritable, Text, Text, Text> {
 		@Override
 		protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			FileSplit split = (FileSplit) context.getInputSplit();
 			String fileName = StringUtil.getShortPath(split.getPath().toString());
+			LOG.info("[InverseIndexMapper][split.getPath:" + split.getPath() + "][fileName:" + fileName + "]");
 			StringTokenizer st = new StringTokenizer(value.toString());
 			while (st.hasMoreTokens()) {
 				String word = st.nextToken().toLowerCase();
+				LOG.info("[InverseIndexMapper][word:" + word + "]");
 				word = word + ":" + fileName;
+				LOG.info("[InverseIndexMapper][write word:" + word + "]");
 				context.write(new Text(word), new Text("1"));
 			}
 		}
@@ -59,11 +66,15 @@ public class InverseIndex extends Configured implements Tool {
 				throws IOException, InterruptedException {
 
 			long sum = 0;
+			LOG.info("[InverseIndexCombiner][sum:0]");
 			for (Text value : values) {
 				sum += Integer.valueOf(value.toString());
+				LOG.info("[InverseIndexCombiner][sum:" + sum + "]");
 			}
 			String wordKey = StringUtil.getSplitByIndex(key.toString(), ":", 0);
+			LOG.info("[InverseIndexCombiner][key:" + key + "][workKey:" + wordKey + "]");
 			String fileNameKey = StringUtil.getSplitByIndex(key.toString(), ":", 1);
+			LOG.info("[InverseIndexCombiner][key:" + key + "][fileNameKey:" + fileNameKey + "]");
 			context.write(new Text(wordKey), new Text(fileNameKey + ":" + String.valueOf(sum)));
 		}
 	}
@@ -75,8 +86,10 @@ public class InverseIndex extends Configured implements Tool {
 
 			StringBuilder sb = new StringBuilder("");
 			for (Text v : values) {
+				LOG.info("[InverseIndexReducer][sb:" + sb.toString() + "][v:" + v.toString() + "]");
 				sb.append(v.toString() + " ");
 			}
+			LOG.info("[InverseIndexReducer][key:" + key + "][sb: "+ sb.toString() +"]");
 			context.write(key, new Text(sb.toString()));
 		}
 	}
