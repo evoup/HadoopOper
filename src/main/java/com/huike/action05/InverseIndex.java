@@ -88,8 +88,8 @@ public class InverseIndex extends Configured implements Tool {
 
 			StringBuilder sb = new StringBuilder("");
 			for (Text v : values) {
-				LOG.info("[InverseIndexReducer][sb:" + sb.toString() + "][v:" + v.toString() + "]");
 				sb.append(v.toString() + " ");
+				LOG.info("[InverseIndexReducer][key:" +key + "][sb:" + sb.toString() + "][v:" + v.toString() + "]");
 			}
 			LOG.info("[InverseIndexReducer][context.write][key:" + key + "][value: "+ sb.toString() +"]");
 			context.write(key, new Text(sb.toString()));
