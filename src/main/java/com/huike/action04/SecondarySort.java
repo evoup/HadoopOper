@@ -35,22 +35,23 @@ public class SecondarySort extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			LOG.info("[SecondarySortMapper][line:" + line + "]");
+			LOG.info("[SecondarySortMapper][map][line:" + line + "]");
 			StringTokenizer tokenizer = new StringTokenizer(line);
 			int left = 0;
 			int right = 0;
 			if (tokenizer.hasMoreTokens()) {
-				LOG.info("[SecondarySortMapper][hasMoreTokens]");
+				LOG.info("[SecondarySortMapper][map][hasMoreTokens]");
 				left = Integer.parseInt(tokenizer.nextToken());
-				LOG.info("[SecondarySortMapper][left:" + left + "]");
+				LOG.info("[SecondarySortMapper][map][left:" + left + "]");
 				if (tokenizer.hasMoreTokens()) {
-					LOG.info("[SecondarySortMapper][right:" + right + "]");
+					LOG.info("[SecondarySortMapper][map][right:" + right + "]");
 					right = Integer.parseInt(tokenizer.nextToken());
 				}
-				LOG.info("[SecondarySortMapper][left:" + left + "][right:" + right + "]");
+				LOG.info("[SecondarySortMapper][map][left:" + left + "][right:" + right + "]");
 				intkey.set(left, right);
 				intvalue.set(right);
 				context.write(intkey, intvalue);
+				LOG.info("[SecondarySortMapper][map][key:" + new Gson().toJson(intkey) + "][value:" + new Gson().toJson(intvalue) + "]");
 			}
 		}
 	}
@@ -61,9 +62,9 @@ public class SecondarySort extends Configured implements Tool {
 		public void reduce(IntPair key, Iterable<IntWritable> values, Context context)
 				throws IOException, InterruptedException {
 			left.set(Integer.toString(key.getFirst()));
-			LOG.info("[SecondarySortReducer][left set:" + Integer.toString(key.getFirst()) + "]");
+			LOG.info("[SecondarySortReducer][reduce][left set:" + Integer.toString(key.getFirst()) + "]");
 			for (IntWritable val : values) {
-				LOG.info("[SecondarySortReducer][val:" + val + "]");
+				LOG.info("[SecondarySortReducer][reduce][val:" + val + "]");
 				context.write(left, val);
 			}
 		}
