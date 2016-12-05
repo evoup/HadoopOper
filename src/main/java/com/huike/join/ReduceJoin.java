@@ -93,7 +93,7 @@ public class ReduceJoin extends Configured implements Tool {
 				} else if (val.startsWith(TEMPERATURE_FILE)) {
 					LOG.info("[ReduceJoinReducer][reduce][TEMPERATURE_FILE][val:" + val + "]");
 					temperatures.add(val.replaceFirst(TEMPERATURE_FILE, ""));
-					LOG.info("[ReduceJoinReducer][reduce][stations.add][item:" + val.replaceFirst(TEMPERATURE_FILE, "") + "]");
+					LOG.info("[ReduceJoinReducer][reduce][temperatures.add][item:" + val.replaceFirst(TEMPERATURE_FILE, "") + "]");
 				}
 			}
 			LOG.info("[ReduceJoinReducer][reduce][stations:" + new Gson().toJson(stations) + "]");
