@@ -1,5 +1,6 @@
 package com.huike.join;
 
+import com.google.gson.Gson;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -18,8 +19,11 @@ import org.apache.hadoop.util.ToolRunner;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ReduceJoin extends Configured implements Tool {
+	private static final Log LOG = LogFactory.getLog(ReduceJoin.class);
 
 	private final static String STATION_FILE = "Station.txt";
 	private final static String TEMPERATURE_FILE = "Temperature.txt";
@@ -34,24 +38,33 @@ public class ReduceJoin extends Configured implements Tool {
 		@Override
 		protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 			String pathName = ((FileSplit) context.getInputSplit()).getPath().toString();
+			LOG.info("[ReduceJoinMapper][map][pathName:" + pathName + "]");
 			// 如果数据来自于STATION_FILE，加一个STATION_FILE的标记
 			if (pathName.endsWith(STATION_FILE)) {
+				LOG.info("[ReduceJoinMapper][map][is Station.txt]");
 				String[] valueItems = value.toString().split("\\s+");
+				LOG.info("[ReduceJoinMapper][map][valueItems:" + new Gson().toJson(valueItems) + "]");
 				// 过滤掉脏数据
 				if (valueItems.length != 3) {
 					return;
 				}
 				joinKey.set(valueItems[0]);
+				LOG.info("[ReduceJoinMapper][map][joinKey:" + valueItems[0] + "]");
 				combineValue.set(STATION_FILE + valueItems[1] + "\t" + valueItems[2]);
+				LOG.info("[ReduceJoinMapper][map][combineValue:" + STATION_FILE + valueItems[1] + "\t" + valueItems[2] + "]");
 			} else if (pathName.endsWith(TEMPERATURE_FILE)) {
+				LOG.info("[ReduceJoinMapper][map][is Temperature.txt]");
 				// 如果数据来自于TEMPERATURE_FILE，加一个TEMPERATURE_FILE的标记
 				String[] valueItems = value.toString().split("\\s+");
+				LOG.info("[ReduceJoinMapper][map][valueItems:" + new Gson().toJson(valueItems) + "]");
 				// 过滤掉脏数据
 				if (valueItems.length != 3) {
 					return;
 				}
 				joinKey.set(valueItems[0]);
+				LOG.info("[ReduceJoinMapper][map][joinKey:" + valueItems[0] + "]");
 				combineValue.set(TEMPERATURE_FILE + valueItems[1] + "\t" + valueItems[2]);
+				LOG.info("[ReduceJoinMapper][map][combineValue:" + TEMPERATURE_FILE + valueItems[1] + "\t" + valueItems[2] + "]");
 			}
 			context.write(joinKey, combineValue);
 		}
@@ -65,22 +78,30 @@ public class ReduceJoin extends Configured implements Tool {
 		@Override
 		protected void reduce(Text key, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
+			LOG.info("[ReduceJoinReducer][reduce]");
 			// 一定要清空数据
 			stations.clear();
 			temperatures.clear();
 			// 相同key的记录会分组到一起，我们需要把相同key下来自于不同文件的数据分开
 			for (Text value : values) {
 				String val = value.toString();
+				LOG.info("[ReduceJoinReducer][reduce][val:" + val + "]");
 				if (val.startsWith(STATION_FILE)) {
+					LOG.info("[ReduceJoinReducer][reduce][is Station.txt][val:" + val + "]");
 					stations.add(val.replaceFirst(STATION_FILE, ""));
+					LOG.info("[ReduceJoinReducer][reduce][stations.add][item:" + val.replaceFirst(STATION_FILE, "") + "]");
 				} else if (val.startsWith(TEMPERATURE_FILE)) {
+					LOG.info("[ReduceJoinReducer][reduce][is Temperature.txt][val:" + val + "]");
 					temperatures.add(val.replaceFirst(TEMPERATURE_FILE, ""));
+					LOG.info("[ReduceJoinReducer][reduce][stations.add][item:" + val.replaceFirst(TEMPERATURE_FILE, "") + "]");
 				}
 			}
-
+			LOG.info("[ReduceJoinReducer][reduce][stations:" + new Gson().toJson(stations) + "]");
+			LOG.info("[ReduceJoinReducer][reduce][temperatures:" + new Gson().toJson(temperatures) + "]");
 			for (String station : stations) {
 				for (String temperature : temperatures) {
 					result.set(station + "\t" + temperature);
+					LOG.info("[ReduceJoinReducer][reduce][context.write][key:" + key + "][value:" +result + "]");
 					context.write(key, result);
 				}
 			}
