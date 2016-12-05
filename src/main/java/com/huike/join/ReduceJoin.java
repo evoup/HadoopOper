@@ -96,8 +96,8 @@ public class ReduceJoin extends Configured implements Tool {
 					LOG.info("[ReduceJoinReducer][reduce][temperatures.add][item:" + val.replaceFirst(TEMPERATURE_FILE, "") + "]");
 				}
 			}
-			LOG.info("[ReduceJoinReducer][reduce][stations:" + new Gson().toJson(stations) + "]");
-			LOG.info("[ReduceJoinReducer][reduce][temperatures:" + new Gson().toJson(temperatures) + "]");
+			LOG.info("[ReduceJoinReducer][reduce][key:" + key + "][stations:" + new Gson().toJson(stations) + "]");
+			LOG.info("[ReduceJoinReducer][reduce][key:" + key + "][temperatures:" + new Gson().toJson(temperatures) + "]");
 			for (String station : stations) {
 				for (String temperature : temperatures) {
 					result.set(station + "\t" + temperature);
