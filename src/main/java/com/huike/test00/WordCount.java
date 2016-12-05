@@ -16,8 +16,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class WordCount extends Configured implements Tool {
+	private static final Log LOG = LogFactory.getLog(WordCount.class);
 
 	public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
 
@@ -29,6 +32,7 @@ public class WordCount extends Configured implements Tool {
 			while (itr.hasMoreTokens()) {
 				word.set(itr.nextToken());
 				context.write(word, one);
+				LOG.info("[TokenizerMapper][map][context.write][key:" + word + "][value:" + value + "]");
 			}
 		}
 	}
@@ -40,10 +44,12 @@ public class WordCount extends Configured implements Tool {
 				throws IOException, InterruptedException {
 			int sum = 0;
 			for (IntWritable val : values) {
+				LOG.info("[IntSumReducer][reduce][sum before:" + sum + "][sum after:" + sum + "]");
 				sum += val.get();
 			}
 			result.set(sum);
 			context.write(key, result);
+			LOG.info("[IntSumReducer][reduce][context.write][key:" + key + "][value:" + result + "]");
 		}
 	}
 
