@@ -41,7 +41,7 @@ public class ReduceJoin extends Configured implements Tool {
 			LOG.info("[ReduceJoinMapper][map][pathName:" + pathName + "]");
 			// 如果数据来自于STATION_FILE，加一个STATION_FILE的标记
 			if (pathName.endsWith(STATION_FILE)) {
-				LOG.info("[ReduceJoinMapper][map][is Station.txt]");
+				LOG.info("[ReduceJoinMapper][map][STATION_FILE]");
 				String[] valueItems = value.toString().split("\\s+");
 				LOG.info("[ReduceJoinMapper][map][valueItems:" + new Gson().toJson(valueItems) + "]");
 				// 过滤掉脏数据
@@ -53,7 +53,7 @@ public class ReduceJoin extends Configured implements Tool {
 				combineValue.set(STATION_FILE + valueItems[1] + "\t" + valueItems[2]);
 				LOG.info("[ReduceJoinMapper][map][combineValue:" + STATION_FILE + valueItems[1] + "\t" + valueItems[2] + "]");
 			} else if (pathName.endsWith(TEMPERATURE_FILE)) {
-				LOG.info("[ReduceJoinMapper][map][is Temperature.txt]");
+				LOG.info("[ReduceJoinMapper][map][TEMPERATURE_FILE]");
 				// 如果数据来自于TEMPERATURE_FILE，加一个TEMPERATURE_FILE的标记
 				String[] valueItems = value.toString().split("\\s+");
 				LOG.info("[ReduceJoinMapper][map][valueItems:" + new Gson().toJson(valueItems) + "]");
@@ -87,11 +87,11 @@ public class ReduceJoin extends Configured implements Tool {
 				String val = value.toString();
 				LOG.info("[ReduceJoinReducer][reduce][val:" + val + "]");
 				if (val.startsWith(STATION_FILE)) {
-					LOG.info("[ReduceJoinReducer][reduce][is Station.txt][val:" + val + "]");
+					LOG.info("[ReduceJoinReducer][reduce][STATION_FILE][val:" + val + "]");
 					stations.add(val.replaceFirst(STATION_FILE, ""));
 					LOG.info("[ReduceJoinReducer][reduce][stations.add][item:" + val.replaceFirst(STATION_FILE, "") + "]");
 				} else if (val.startsWith(TEMPERATURE_FILE)) {
-					LOG.info("[ReduceJoinReducer][reduce][is Temperature.txt][val:" + val + "]");
+					LOG.info("[ReduceJoinReducer][reduce][TEMPERATURE_FILE][val:" + val + "]");
 					temperatures.add(val.replaceFirst(TEMPERATURE_FILE, ""));
 					LOG.info("[ReduceJoinReducer][reduce][stations.add][item:" + val.replaceFirst(TEMPERATURE_FILE, "") + "]");
 				}
