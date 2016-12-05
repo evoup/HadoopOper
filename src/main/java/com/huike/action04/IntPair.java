@@ -18,9 +18,9 @@ public class IntPair implements WritableComparable<IntPair> {
 	private static final Log LOG = LogFactory.getLog(IntPair.class);
 
 	public void set(int left, int right) {
-		LOG.info("[IntPair][first:"+ left +"][second:" + second +"]");
 		first = left;
 		second = right;
+		LOG.info("[IntPair][first:"+ first +"][second:" + second +"]");
 	}
 
 	public int getFirst() {
@@ -42,7 +42,7 @@ public class IntPair implements WritableComparable<IntPair> {
 	@Override
 	// 序列化，将IntPair转化成使用流传送的二进制
 	public void write(DataOutput out) throws IOException {
-		LOG.info("[readFields][write][first:" + first + "][second:" + second + "]");
+		LOG.info("[readFields][write][out.writeInt][first:" + first + "][second:" + second + "]");
 		out.writeInt(first);
 		out.writeInt(second);
 	}
