@@ -32,7 +32,7 @@ public class WordCount extends Configured implements Tool {
 			while (itr.hasMoreTokens()) {
 				word.set(itr.nextToken());
 				context.write(word, one);
-				LOG.info("[TokenizerMapper][map][context.write][key:" + word + "][value:" + value + "]");
+				LOG.info("[TokenizerMapper][map][context.write][key:" + word + "][value:" + one + "]");
 			}
 		}
 	}
