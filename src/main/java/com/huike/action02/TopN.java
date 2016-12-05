@@ -32,14 +32,14 @@ public class TopN extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			LOG.info("[map][key:" + key +"][line:" + line + "]");
+			LOG.info("[TopNMapper][map][key:" + key + "][line:" + line + "]");
 			String[] parameters = line.split("\\s+");
-			LOG.info("[map][parameters:" + new Gson().toJson(parameters) + "]");
+			LOG.info("[TopNMapper][map][key:" + key + "][parameters:" + new Gson().toJson(parameters) + "]");
 			Integer clicks = Integer.parseInt(parameters[1]);
-			LOG.info("[map][clicks:" + clicks + "]");
+			LOG.info("[TopNMapper][map][key:" + key + "][clicks:" + clicks + "]");
 			map.put(clicks, value.toString());
 			if (map.size() > k) {
-				LOG.info("[map][large than 3, remove " + map.firstKey() + "]");
+				LOG.info("[TopNMapper][map][key:" + key + "][large than 3, remove " + map.firstKey() + "]");
 				map.remove(map.firstKey());
 			}
 
@@ -47,9 +47,10 @@ public class TopN extends Configured implements Tool {
 
 		protected void cleanup(Context context) throws IOException, InterruptedException {
 			for (String text : map.values()) {
-				LOG.info("[cleanup][text:" + text + "]");
+				LOG.info("[TopNMapper][cleanup][text:" + text + "]");
 				if (text != null && !text.equals("")) {
 					context.write(NullWritable.get(), new Text(text));
+					LOG.info("[TopNMapper][cleanup][context.write][key:"+ NullWritable.get() +"][value:" + text + "]");
 				}
 			}
 		}
@@ -62,22 +63,23 @@ public class TopN extends Configured implements Tool {
 
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			System.exit(0);
-/*			for (Text item : values) {
-				LOG.info("[reduce][value:" + values + "]");
-				System.out.println("[reduce][value:" + values + "]");
+			for (Text item : values) {
+				LOG.info("[TopNReducer][reduce][key:" + key + "][value:" + values + "]");
+				System.out.println("[TopNReducer][reduce][key:" + key + "][value:" + values + "]");
 				String value[] = item.toString().split("\t");
-				LOG.info("[reduce][values:" + new Gson().toJson(value) + "]");
+				LOG.info("[TopNReducer][reduce][key:" + key + "][values:" + new Gson().toJson(value) + "]");
 				Integer clicks = Integer.parseInt(value[1]);
-				LOG.info("[reduce][clicks:" + clicks + "]");
+				LOG.info("[TopNReducer][reduce][key:" + key + "][clicks:" + clicks + "]");
 				map.put(clicks, item.toString());
 				if (map.size() > k) {
-					LOG.info("[reduce][reach 3, remove first element]");
+					LOG.info("[TopNReducer][reduce][key:" + key + "][reach 3, remove first element]");
 					map.remove(map.firstKey());
 				}
 			}
 			for (String text : map.values()) {
 				context.write(NullWritable.get(), new Text(text));
-			}*/
+				LOG.info("[TopNReducer][reduce][context.write][key:" + NullWritable.get()+ "][value:" + text + "]");
+			}
 		}
 	}
 
