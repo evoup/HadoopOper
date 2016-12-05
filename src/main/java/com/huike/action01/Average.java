@@ -26,10 +26,11 @@ public class Average extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			LOG.info("[AverageCountMapper][line:" + line + "]");
+			LOG.info("[AverageCountMapper][map][line:" + line + "]");
 			String[] parameters = line.split("\\s+");
-			LOG.info("[AverageCountMapper][parameters:" + new Gson().toJson(parameters) + "]");
+			LOG.info("[AverageCountMapper][map][parameters:" + new Gson().toJson(parameters) + "]");
 			context.write(new Text(parameters[0]), new Text(parameters[1]));
+			LOG.info("[AverageCountMapper][map][context.write][key:" + parameters[0] + "][value:" + parameters[1] + "]");
 
 		}
 
@@ -37,35 +38,35 @@ public class Average extends Configured implements Tool {
 
 	public static class AverageCountCombiner extends Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-			LOG.info("[AverageCountCombiner]");
+			LOG.info("[AverageCountCombiner][reduce]");
 			Double sum = 0.00;
 			int count = 0;
-			LOG.info("[AverageCountCombiner][" + new Gson().toJson(values) + "]");
+			LOG.info("[AverageCountCombiner][reduce][" + new Gson().toJson(values) + "]");
 			for (Text item : values) {
 				sum = sum + Double.parseDouble(item.toString());
-				LOG.info("[AverageCountCombiner][sum:" + sum + "][add item:" + item.toString() + "]");
+				LOG.info("[AverageCountCombiner][reduce][sum:" + sum + "][add item:" + item.toString() + "]");
 				count++;
 			}
-			LOG.info("[AverageCountCombiner][count:" + count + "]");
+			LOG.info("[AverageCountCombiner][reduce][count:" + count + "]");
 			context.write(new Text(key), new Text(sum + "-" + count));
 		}
 	}
 
 	public static class AverageCountReducer extends Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-			LOG.info("[AverageCountReducer]");
+			LOG.info("[AverageCountReducer][reduce]");
 			Double sum = 0.00;
 			int count = 0;
 			for (Text t : values) {
-				LOG.info("[AverageCountReducer][Text:" + t + "]");
+				LOG.info("[AverageCountReducer][reduce][Text:" + t + "]");
 				String[] str = t.toString().split("-");
-				LOG.info("[AverageCountReducer][str:" + new Gson().toJson(str) + "]");
+				LOG.info("[AverageCountReducer][reduce][str:" + new Gson().toJson(str) + "]");
 				sum += Double.parseDouble(str[0]);
 				count += Integer.parseInt(str[1]);
-				LOG.info("[AverageCountReducer][sum:" + sum + "][count:" + count + "]");
+				LOG.info("[AverageCountReducer][reduce][sum:" + sum + "][count:" + count + "]");
 			}
 			double average = sum / count;
-			LOG.info("[AverageCountReducer][average:" + average + "]");
+			LOG.info("[AverageCountReducer][reduce][average:" + average + "]");
 			context.write(new Text(key), new Text(String.valueOf(average)));
 		}
 	}
