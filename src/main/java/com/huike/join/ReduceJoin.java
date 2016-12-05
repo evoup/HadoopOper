@@ -64,8 +64,8 @@ public class ReduceJoin extends Configured implements Tool {
 				joinKey.set(valueItems[0]);
 				LOG.info("[ReduceJoinMapper][map][joinKey:" + valueItems[0] + "]");
 				combineValue.set(TEMPERATURE_FILE + valueItems[1] + "\t" + valueItems[2]);
-				LOG.info("[ReduceJoinMapper][map][context.write][key:" + joinKey+ "][value:" + combineValue + "]");
 			}
+			LOG.info("[ReduceJoinMapper][map][context.write][key:" + joinKey+ "][value:" + combineValue + "]");
 			context.write(joinKey, combineValue);
 		}
 	}
