@@ -82,6 +82,7 @@ public class ReduceJoin extends Configured implements Tool {
 			// 一定要清空数据
 			stations.clear();
 			temperatures.clear();
+			LOG.info("[ReduceJoinReducer][reduce][key:" + key + "][clean]");
 			// 相同key的记录会分组到一起，我们需要把相同key下来自于不同文件的数据分开
 			for (Text value : values) {
 				String val = value.toString();

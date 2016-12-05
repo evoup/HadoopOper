@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gson.Gson;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -22,10 +23,14 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+// semi join: https://mariadb.com/kb/en/mariadb/semi-join-subquery-optimizations/
 public class SemiJoin extends Configured implements Tool {
 	private final static String STATION_FILE = "Station.txt";
 	private final static String TEMPERATURE_FILE = "Temperature.txt";
+	private static final Log LOG = LogFactory.getLog(SemiJoin.class);
 
 	public static class SemiJoinMapper extends Mapper<Object, Text, Text, Text> {
 		private Set<String> joinKeys = new HashSet<>();
@@ -34,21 +39,27 @@ public class SemiJoin extends Configured implements Tool {
 
 		@Override
 		protected void setup(Context context) throws IOException, InterruptedException {
+			LOG.info("[SemiJoinMapper][setup]");
 			BufferedReader br;
 			String station;
 			Path[] paths = context.getLocalCacheFiles();
 			for (Path path : paths) {
 				String pathStr = path.toString();
+				LOG.info("[SemiJoinMapper][setup][pathStr:" + pathStr + "]");
 				if (pathStr.endsWith("Station.txt")) {
+					LOG.info("[SemiJoinMapper][setup][STATION_FILE]");
 					br = new BufferedReader(new FileReader(pathStr));
 					while (null != (station = br.readLine())) {
 						String[] stationItems = station.split("\\s+");
+						LOG.info("[SemiJoinMapper][setup][stationItems:" + new Gson().toJson(stationItems) +"]");
 						if (stationItems.length == 3) {
 							joinKeys.add(stationItems[0]);
+							LOG.info("[SemiJoinMapper][setup][joinKeys add:" + stationItems[0] + "]");
 						}
 					}
 				}
 			}
+			LOG.info("[SemiJoinMapper][setup][joinKeys:" + new Gson().toJson(joinKeys) + "]");
 		}
 
 		/**
@@ -57,9 +68,11 @@ public class SemiJoin extends Configured implements Tool {
 		@Override
 		protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
 			String pathName = ((FileSplit) context.getInputSplit()).getPath().toString();
+			LOG.info("[SemiJoinMapper][map][pathName:" + pathName + "]");
 			// 如果数据来自于STATION_FILE，加一个STATION_FILE的标记
 			if (pathName.endsWith(STATION_FILE)) {
 				String[] valueItems = value.toString().split("\\s+");
+				LOG.info("[SemiJoinMapper][map][STATION_FILE][valueItems:" + new Gson().toJson(valueItems) + "]");
 				// 过滤掉脏数据
 				if (valueItems.length != 3) {
 					return;
@@ -72,6 +85,7 @@ public class SemiJoin extends Configured implements Tool {
 			} else if (pathName.endsWith(TEMPERATURE_FILE)) {
 				// 如果数据来自于TEMPERATURE_FILE，加一个TEMPERATURE_FILE的标记
 				String[] valueItems = value.toString().split("\\s+");
+				LOG.info("[SemiJoinMapper][map][TEMPERATURE_FILE][valueItems:" + new Gson().toJson(valueItems) + "]");
 				// 过滤掉脏数据
 				if (valueItems.length != 3) {
 					return;
@@ -83,6 +97,7 @@ public class SemiJoin extends Configured implements Tool {
 				}
 			}
 			context.write(joinKey, combineValue);
+			LOG.info("[SemiJoinMapper][map][context.write][key:" + joinKey + "][value:" + combineValue + "]");
 		}
 	}
 
@@ -97,13 +112,16 @@ public class SemiJoin extends Configured implements Tool {
 			// 一定要清空数据
 			stations.clear();
 			temperatures.clear();
+			LOG.info("[SemiJoinReducer][reduce][key:" + key + "][clean stations and temperatures]");
 			// 相同key的记录会分组到一起，我们需要把相同key下来自于不同文件的数据分开
 			for (Text value : values) {
 				String val = value.toString();
 				if (val.startsWith(STATION_FILE)) {
 					stations.add(val.replaceFirst(STATION_FILE, ""));
+					LOG.info("[SemiJoinReducer][reduce][key:" + key + "][stations add][station:" + val.replaceFirst(STATION_FILE, "") + "]");
 				} else if (val.startsWith(TEMPERATURE_FILE)) {
 					temperatures.add(val.replaceFirst(TEMPERATURE_FILE, ""));
+					LOG.info("[SemiJoinReducer][reduce][key:" +key + "][temperatures add][temperature:" + val.replaceFirst(TEMPERATURE_FILE, "") + "]");
 				}
 			}
 
@@ -111,6 +129,7 @@ public class SemiJoin extends Configured implements Tool {
 				for (String temperature : temperatures) {
 					result.set(station + "\t" + temperature);
 					context.write(key, result);
+					LOG.info("[SemiJoinReducer][reduce][context.write][key:" + key + "][value:" + result + "]");
 				}
 			}
 		}
