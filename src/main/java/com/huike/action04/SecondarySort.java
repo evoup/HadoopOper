@@ -42,9 +42,7 @@ public class SecondarySort extends Configured implements Tool {
 			if (tokenizer.hasMoreTokens()) {
 				LOG.info("[SecondarySortMapper][map][hasMoreTokens]");
 				left = Integer.parseInt(tokenizer.nextToken());
-				LOG.info("[SecondarySortMapper][map][left:" + left + "]");
 				if (tokenizer.hasMoreTokens()) {
-					LOG.info("[SecondarySortMapper][map][right:" + right + "]");
 					right = Integer.parseInt(tokenizer.nextToken());
 				}
 				LOG.info("[SecondarySortMapper][map][left:" + left + "][right:" + right + "]");
