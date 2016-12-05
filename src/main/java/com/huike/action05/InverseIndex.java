@@ -48,13 +48,13 @@ public class InverseIndex extends Configured implements Tool {
 		protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			FileSplit split = (FileSplit) context.getInputSplit();
 			String fileName = StringUtil.getShortPath(split.getPath().toString());
-			LOG.info("[InverseIndexMapper][split.getPath:" + split.getPath() + "][fileName:" + fileName + "]");
+			LOG.info("[InverseIndexMapper][map][split.getPath:" + split.getPath() + "][fileName:" + fileName + "]");
 			StringTokenizer st = new StringTokenizer(value.toString());
 			while (st.hasMoreTokens()) {
 				String word = st.nextToken().toLowerCase();
-				LOG.info("[InverseIndexMapper][word:" + word + "]");
+				LOG.info("[InverseIndexMapper][map][word:" + word + "]");
 				word = word + ":" + fileName;
-				LOG.info("[InverseIndexMapper][content.write][key:" + word + "][value:1]");
+				LOG.info("[InverseIndexMapper][map][content.write][key:" + word + "][value:1]");
 				context.write(new Text(word), new Text("1"));
 			}
 		}
@@ -66,16 +66,16 @@ public class InverseIndex extends Configured implements Tool {
 				throws IOException, InterruptedException {
 
 			long sum = 0;
-			LOG.info("[InverseIndexCombiner][sum:0]");
+			LOG.info("[InverseIndexCombiner][local reduce][sum:0]");
 			for (Text value : values) {
 				sum += Integer.valueOf(value.toString());
-				LOG.info("[InverseIndexCombiner][key:" + key.toString() + "][sum:" + sum + "]");
+				LOG.info("[InverseIndexCombiner][local reduce][key:" + key.toString() + "][sum:" + sum + "]");
 			}
 			String wordKey = StringUtil.getSplitByIndex(key.toString(), ":", 0);
-			LOG.info("[InverseIndexCombiner][key:" + key.toString() + "][workKey:" + wordKey + "]");
+			LOG.info("[InverseIndexCombiner][local reduce][key:" + key.toString() + "][workKey:" + wordKey + "]");
 			String fileNameKey = StringUtil.getSplitByIndex(key.toString(), ":", 1);
-			LOG.info("[InverseIndexCombiner][fileNameKey:" + fileNameKey + "]");
-			LOG.info("[InverseIndexCombiner][context.write][key:" + wordKey + "][value:" +
+			LOG.info("[InverseIndexCombiner][local reduce][fileNameKey:" + fileNameKey + "]");
+			LOG.info("[InverseIndexCombiner][local reduce][context.write][key:" + wordKey + "][value:" +
 					fileNameKey + ":" + String.valueOf(sum) + "]");
 			context.write(new Text(wordKey), new Text(fileNameKey + ":" + String.valueOf(sum)));
 		}
@@ -89,9 +89,9 @@ public class InverseIndex extends Configured implements Tool {
 			StringBuilder sb = new StringBuilder("");
 			for (Text v : values) {
 				sb.append(v.toString() + " ");
-				LOG.info("[InverseIndexReducer][key:" +key + "][sb:" + sb.toString() + "][v:" + v.toString() + "]");
+				LOG.info("[InverseIndexReducer][reduce][key:" +key + "][sb:" + sb.toString() + "][v:" + v.toString() + "]");
 			}
-			LOG.info("[InverseIndexReducer][context.write][key:" + key + "][value: "+ sb.toString() +"]");
+			LOG.info("[InverseIndexReducer][reduce][context.write][key:" + key + "][value: "+ sb.toString() +"]");
 			context.write(key, new Text(sb.toString()));
 		}
 	}
