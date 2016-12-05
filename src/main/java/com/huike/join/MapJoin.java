@@ -72,7 +72,7 @@ public class MapJoin extends Configured implements Tool {
 			if (null != station) {// 如果缓存中存在对应的joinkey，那就做连接操作并输出
 				outPutKey.set(TemperatureItems[0]);
 				outPutValue.set(station + "\t" + TemperatureItems[1] + "\t" + TemperatureItems[2]);
-				LOG.info("[MapJoinMapper][context.write][key:"+outPutKey+"][value:"+outPutValue+"]");
+				LOG.info("[MapJoinMapper][map][context.write][key:"+outPutKey+"][value:"+outPutValue+"]");
 				context.write(outPutKey, outPutValue);
 			}
 		}
