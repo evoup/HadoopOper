@@ -44,7 +44,7 @@ public class WordCount extends Configured implements Tool {
 				throws IOException, InterruptedException {
 			int sum = 0;
 			for (IntWritable val : values) {
-				LOG.info("[IntSumReducer][reduce][sum before:" + sum + "][sum after:" + sum + "]");
+				LOG.info("[IntSumReducer][reduce][key:" + key + "][sum before:" + sum + "][sum after:" + sum + "]");
 				sum += val.get();
 			}
 			result.set(sum);
