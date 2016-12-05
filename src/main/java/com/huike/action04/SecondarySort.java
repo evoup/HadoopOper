@@ -51,7 +51,7 @@ public class SecondarySort extends Configured implements Tool {
 				intkey.set(left, right);
 				intvalue.set(right);
 				context.write(intkey, intvalue);
-				LOG.info("[SecondarySortMapper][map][context.write][key:" + new Gson().toJson(intkey) + "][value:" + new Gson().toJson(intvalue) + "]");
+				LOG.info("[SecondarySortMapper][map][context.write][key:" + new Gson().toJson(intkey) + "][value:" + intvalue + "]");
 			}
 		}
 	}
