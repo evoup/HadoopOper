@@ -40,14 +40,14 @@ public class MaxNum extends Configured implements Tool {
 			long max = 0L;
 			LOG.info("[MaxNumReducer][reduce][key:" + key + "]");
 			for (Text text : values) {
-				LOG.info("[MaxNumReducer][reduce][key:" + key + "][values][" + new Gson().toJson(values) +"]");
+				LOG.info("[MaxNumReducer][reduce][key:" + key + "][value:" + text +"]");
 				if (Long.parseLong(text.toString()) > max) {
 					max = Long.parseLong(text.toString());
 					LOG.info("[MaxNumReducer][reduce][key:" + key + "][max:" + max + "]");
 				}
 			}
-			LOG.info("[MaxNumReducer][reduce][key:" + key + "][value:" + new Text(String.valueOf(max)) + "]");
 			context.write(key, new Text(String.valueOf(max)));
+			LOG.info("[MaxNumReducer][reduce][context.write][key:" + key + "][value:" + String.valueOf(max) + "]");
 		}
 	}
 
