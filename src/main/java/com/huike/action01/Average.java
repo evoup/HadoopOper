@@ -38,17 +38,17 @@ public class Average extends Configured implements Tool {
 
 	public static class AverageCountCombiner extends Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-			LOG.info("[AverageCountCombiner][reduce]");
+			LOG.info("[AverageCountCombiner][local reduce]");
 			Double sum = 0.00;
 			int count = 0;
-			LOG.info("[AverageCountCombiner][reduce][" + new Gson().toJson(values) + "]");
+			LOG.info("[AverageCountCombiner][local reduce][" + new Gson().toJson(values) + "]");
 			for (Text item : values) {
 				sum = sum + Double.parseDouble(item.toString());
-				LOG.info("[AverageCountCombiner][reduce][sum:" + sum + "][add item:" + item.toString() + "]");
+				LOG.info("[AverageCountCombiner][local reduce][sum:" + sum + "][add item:" + item.toString() + "]");
 				count++;
 			}
-			LOG.info("[AverageCountCombiner][reduce][count:" + count + "]");
 			context.write(new Text(key), new Text(sum + "-" + count));
+			LOG.info("[AverageCountCombiner][local reduce][context.write][key:" + key + "][value(sum-count):" + sum + "-" + count + "]");
 		}
 	}
 
