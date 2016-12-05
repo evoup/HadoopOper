@@ -26,27 +26,27 @@ public class MaxNum extends Configured implements Tool {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
 			String line = value.toString();
-			LOG.info("[MaxNumMapper][line:" + line + "]");
+			LOG.info("[MaxNumMapper][map][key:" + key + "][line:" + line + "]");
 			String[] parameters = line.split("\\s+");
-			LOG.info("[MaxNumMapper][parameters:" + new Gson().toJson(parameters) + "]");
+			LOG.info("[MaxNumMapper][map][key:" + key + "][parameters:" + new Gson().toJson(parameters) + "]");
 			String deptid = parameters[0];
-			LOG.info("[MaxNumMapper][deptid:" + deptid + "]");
 			context.write(new Text(deptid), new Text(String.valueOf(parameters[1])));
+			LOG.info("[MaxNumMapper][map][context.write][key:" + deptid + "][value:" +String.valueOf(parameters[1]) + "]");
 		}
 	}
 
 	public static class MaxNumReducer extends Reducer<Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			long max = 0L;
-			LOG.info("[MaxNumReducer]");
+			LOG.info("[MaxNumReducer][reduce][key:" + key + "]");
 			for (Text text : values) {
-				LOG.info("[MaxNumReducer][values][" + new Gson().toJson(values) +"]");
+				LOG.info("[MaxNumReducer][reduce][key:" + key + "][values][" + new Gson().toJson(values) +"]");
 				if (Long.parseLong(text.toString()) > max) {
 					max = Long.parseLong(text.toString());
-					LOG.info("[MaxNumReducer][max:" + max + "]");
+					LOG.info("[MaxNumReducer][reduce][key:" + key + "][max:" + max + "]");
 				}
 			}
-			LOG.info("[MaxNumReducer][key:" + key + "][value:" + new Text(String.valueOf(max)) + "]");
+			LOG.info("[MaxNumReducer][reduce][key:" + key + "][value:" + new Text(String.valueOf(max)) + "]");
 			context.write(key, new Text(String.valueOf(max)));
 		}
 	}
