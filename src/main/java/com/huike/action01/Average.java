@@ -66,8 +66,8 @@ public class Average extends Configured implements Tool {
 				LOG.info("[AverageCountReducer][reduce][key:" + key + "][sum:" + sum + "][count:" + count + "]");
 			}
 			double average = sum / count;
-			LOG.info("[AverageCountReducer][reduce][key:" + key + "][average:" + average + "]");
 			context.write(new Text(key), new Text(String.valueOf(average)));
+			LOG.info("[AverageCountReducer][reduce][context.write][key:" + key + "][value(average):" + average + "]");
 		}
 	}
 
